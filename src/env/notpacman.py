@@ -24,6 +24,13 @@ class NotPacMan:
     return not game_map.is_wall(new_x, new_y)
   
   def move(self, game_map):
+    if self.grid_x == 0 and self.grid_y == 14:
+      self.grid_x = 26
+      return
+    elif self.grid_x == 27 and self.grid_y == 14:
+      self.grid_x = 1
+      return
+    
     if self.can_move(game_map, self.desired_direction):
       self.direction = self.desired_direction  # Update current direction if possible
 

@@ -1,7 +1,7 @@
 import pygame
 from env.notpacman import NotPacMan
 from env.gamemap import GameMap
-from env.ghost import Ghost
+from env.ghost import Blinky, Inky, Pinky, Clyde
 
 class Game:
     def __init__(self, screen):
@@ -9,12 +9,12 @@ class Game:
         self.game_map = GameMap("env/maps/basicmap.txt")
         self.game_map.create_map_surface()
         self.notpacman = NotPacMan(1, 1)
-        self.ghosts = [
-          Ghost(12, 11, (255, 0, 0)),  # Red Ghost
-          Ghost(13, 11, (255, 128, 0)),  # Orange Ghost
-          Ghost(14, 11, (0, 255, 0)),  # Green Ghost
-          Ghost(15, 11, (0, 0, 255))   # Blue Ghost
-        ]
+        blinky = Blinky()
+        pinky = Pinky()
+        inky = Inky(blinky)
+        clyde = Clyde()
+
+        self.ghosts = [blinky, pinky, inky, clyde]
         # Other initialization
 
     def update(self):
@@ -25,7 +25,7 @@ class Game:
         if current_cell.is_regular_dot or current_cell.is_powerup_dot:
             self.game_map.eat_dot(self.notpacman.grid_x, self.notpacman.grid_y)
         for ghost in self.ghosts:
-          ghost.move(self.game_map)
+          ghost.move(self.game_map, (self.notpacman.grid_x, self.notpacman.grid_y), self.notpacman.direction)
           # Check for collision with NotPacMan
           #if self.notpacman.grid_x == ghost.grid_x and self.notpacman.grid_y == ghost.grid_y:
         # Other updates
