@@ -1,12 +1,13 @@
-import random
 import pygame
 
 class Ghost:
 
-  def __init__(self, x, y, colour, scatter_target):
+  def __init__(self, x, y, colour, scatter_target, release_time):
     self.grid_x = x
     self.grid_y = y
     self.colour = colour
+    self.release_time = release_time
+    self.released = False
     self.move_timer = 0
     self.move_frequency = 20
     self.current_direction = "UP"
@@ -39,9 +40,15 @@ class Ghost:
       current_mode_index = [index for index, mode in enumerate(self.mode_timings) if mode[0] == self.mode][0]
       next_mode_index = (current_mode_index + 1) % len(self.mode_timings)
       self.mode, self.mode_duration = self.mode_timings[next_mode_index]
+      print("New Mode: ", self.mode, "\n")
       self.last_mode_change_time = game_time
     
-  def move(self, game_map, pacman_position, pacman_direction):
+  def move(self, game_map, pacman_position, pacman_direction, game_time):
+      if game_time > self.release_time and self.released == False:
+        self.grid_x = 14
+        self.grid_y = 11
+        self.released = True
+
       if self.grid_x == 0 and self.grid_y == 14:
         self.grid_x = 26
       elif self.grid_x == 27 and self.grid_y == 14:
@@ -124,10 +131,13 @@ class Ghost:
     cell_size = 20  # Assuming this is your cell size
     pixel_x = self.grid_x * cell_size
     pixel_y = self.grid_y * cell_size
-    radius = cell_size // 2  # Adjust radius as needed
-    pygame.draw.circle(screen, self.colour, (pixel_x + radius, pixel_y + radius), radius)
 
+    # Calculate the vertices of the triangle
+    point1 = (pixel_x + cell_size / 2, pixel_y)  # Top vertex (pointing up)
+    point2 = (pixel_x, pixel_y + cell_size)  # Bottom left vertex
+    point3 = (pixel_x + cell_size, pixel_y + cell_size)  # Bottom right vertex
 
+    pygame.draw.polygon(screen, self.colour, [point1, point2, point3])
 # Blinky (The Red Ghost):
 #   In CHASE mode Blinky targets !PacMans exact grid location.
 #   In SCATTER mode Blinky targets the Top Right Corner of the map.
@@ -135,7 +145,7 @@ class Ghost:
 #   Blinky Starts outside of the Ghost Home.
 class Blinky(Ghost):
   def __init__(self):
-    super().__init__(14, 11, (255, 0, 0), (1, 1))
+    super().__init__(14, 11, (255, 0, 0), (23, 1), 0)
   def select_target_tile(self, pacman_position, pacman_direction):
     if self.mode == "CHASE":
       return pacman_position
@@ -149,7 +159,7 @@ class Blinky(Ghost):
 #   Pinky starts inside the ghost home in the middle of Inky and Clyde.
 class Pinky(Ghost):
   def __init__(self):
-    super().__init__(14, 11, (255, 184, 255), (1, 1))
+    super().__init__(14, 11, (255, 184, 255), (3, 1), 5)
   def select_target_tile(self, pacman_position, pacman_direction):
     offset = 4
     if self.mode == "CHASE":
@@ -173,7 +183,7 @@ class Pinky(Ghost):
 #   Inky starts on the lefthand side of the ghost home, next to Pinky.
 class Inky(Ghost):
   def __init__(self, blinky):
-    super().__init__(14, 11, (0, 255, 255), (30, 26))
+    super().__init__(14, 11, (0, 255, 255), (26, 29), 10)
     self.blinky = blinky
   def select_target_tile(self, pacman_position, pacman_direction):
     offset = 2
@@ -188,11 +198,10 @@ class Inky(Ghost):
       elif pacman_direction == "UP":
         pac_y -= offset
       elif pacman_direction == "DOWN":
-        pay_y += offset
+        pac_y += offset
 
       target_x = blinky_x + 2 * (pac_x - blinky_x)
       target_y = blinky_y + 2 * (pac_y - blinky_y)
-
       return (target_x, target_y)
     else:
       return self.scatter_target
@@ -205,7 +214,7 @@ class Inky(Ghost):
 #   Clyde starts on the righthand side of the ghost home, next to Pinky.
 class Clyde(Ghost):
   def __init__(self):
-    super().__init__(14, 11, (255, 184, 82), (1, 30))
+    super().__init__(14, 11, (255, 184, 82), (1, 29), 15)
   def select_target_tile(self, pacman_position, pacman_direction):
     if self.mode == "CHASE":
       pac_x, pac_y = pacman_position

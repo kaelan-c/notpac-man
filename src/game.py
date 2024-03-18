@@ -5,6 +5,7 @@ from env.ghost import Blinky, Inky, Pinky, Clyde
 
 class Game:
     def __init__(self, screen):
+        self.game_time = 0
         self.screen = screen
         self.game_map = GameMap("env/maps/basicmap.txt")
         self.game_map.create_map_surface()
@@ -25,10 +26,12 @@ class Game:
         if current_cell.is_regular_dot or current_cell.is_powerup_dot:
             self.game_map.eat_dot(self.notpacman.grid_x, self.notpacman.grid_y)
         for ghost in self.ghosts:
-          ghost.move(self.game_map, (self.notpacman.grid_x, self.notpacman.grid_y), self.notpacman.direction)
+          ghost.update_mode(self.game_time)
+          ghost.move(self.game_map, (self.notpacman.grid_x, self.notpacman.grid_y), self.notpacman.direction, self.game_time)
           # Check for collision with NotPacMan
           #if self.notpacman.grid_x == ghost.grid_x and self.notpacman.grid_y == ghost.grid_y:
         # Other updates
+        self.game_time = pygame.time.get_ticks() / 1000
 
     def handle_human_input(self):
       keys = pygame.key.get_pressed()
