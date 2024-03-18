@@ -43,7 +43,6 @@ class Ghost:
       current_mode_index = [index for index, mode in enumerate(self.mode_timings) if mode[0] == self.mode][0]
       next_mode_index = (current_mode_index + 1) % len(self.mode_timings)
       self.mode, self.mode_duration = self.mode_timings[next_mode_index]
-      print("New Mode: ", self.mode, "\n")
       self.last_mode_change_time = game_time
     
   def move(self, game_map, pacman_position, pacman_direction, game_time):

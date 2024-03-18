@@ -5,6 +5,7 @@ class GameMap:
   def __init__(self, filename):
     self.width = 0
     self.height = 0
+    self.dots_total = 246
     self.grid = []
     self.load_map(filename)
 
@@ -54,6 +55,7 @@ class GameMap:
   def eat_dot(self, x, y):
     cell = self.get_cell(x, y)
     cell.consume_dot()
+    self.dots_total -= 1
     self.create_map_surface()  # Update the map surface
 
   def draw(self, screen):

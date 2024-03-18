@@ -1,13 +1,13 @@
 import pygame
 
 class NotPacMan:
-  def __init__(self, x, y):
-    self.grid_x = x  # Pac-Man's x-coordinate on the grid
-    self.grid_y = y  # Pac-Man's y-coordinate on the grid
+  def __init__(self):
+    self.grid_x = 14  # Pac-Man's x-coordinate on the grid
+    self.grid_y = 17 # Pac-Man's y-coordinate on the grid
     self.direction = 'RIGHT'  # Current moving direction
     self.desired_direction = 'RIGHT'  # Desired direction
     self.move_timer = 0
-    self.move_frequency = 15  # Number of frames between each move
+    self.move_frequency = 18  # Number of frames between each move, slightly faster than ghosts.
 
   def can_move(self, game_map, direction):
     new_x, new_y = self.grid_x, self.grid_y
