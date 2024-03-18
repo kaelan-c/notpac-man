@@ -17,18 +17,20 @@ class Ghost:
     self.mode_duration = 0  # Duration of the current mode
     self.scatter_target = scatter_target  # Define scatter targets for each ghost
     self.frightened_timer = 0
-    self.frightened_duration = 20  # Duration of frightened mode
+    self.frightened_duration = 7  # Duration of frightened mode
 
   def update_mode(self, game_time, frightened=False):
     if frightened:
-      self.last_mode = self.mode
-      self.mode = "FRIGHTENED"
+      if self.mode != "FRIGHTENED":
+        self.last_mode = self.mode
+        self.mode = "FRIGHTENED"
+      self.move_frequency = 25
       self.frightened_timer = self.frightened_duration
       self.last_mode_change_time = game_time
       return
 
     if self.mode == "FRIGHTENED":
-      self.frightened_timer -= 1
+      self.frightened_timer -= (1 / 60) # Decrement timer once every second.
       if self.frightened_timer <= 0:
         self.mode = self.last_mode
         self.last_mode_change_time = game_time
@@ -37,6 +39,7 @@ class Ghost:
     time_since_last_change = game_time - self.last_mode_change_time
     if time_since_last_change >= self.mode_duration:
       # Cycle through the mode timings
+      self.move_frequency = 20
       current_mode_index = [index for index, mode in enumerate(self.mode_timings) if mode[0] == self.mode][0]
       next_mode_index = (current_mode_index + 1) % len(self.mode_timings)
       self.mode, self.mode_duration = self.mode_timings[next_mode_index]
@@ -136,8 +139,19 @@ class Ghost:
     point1 = (pixel_x + cell_size / 2, pixel_y)  # Top vertex (pointing up)
     point2 = (pixel_x, pixel_y + cell_size)  # Bottom left vertex
     point3 = (pixel_x + cell_size, pixel_y + cell_size)  # Bottom right vertex
+    if self.mode == "FRIGHTENED":
+      # Draw the outline (slightly larger)
+      outline_offset = 2  # You can adjust the thickness of the outline
+      outline_point1 = (point1[0], point1[1] - outline_offset)
+      outline_point2 = (point2[0] - outline_offset, point2[1] + outline_offset)
+      outline_point3 = (point3[0] + outline_offset, point3[1] + outline_offset)
+      pygame.draw.polygon(screen, (255, 255, 255), [outline_point1, outline_point2, outline_point3])
 
-    pygame.draw.polygon(screen, self.colour, [point1, point2, point3])
+      # Draw the main ghost shape
+      pygame.draw.polygon(screen, (0, 0, 255), [point1, point2, point3])
+    else:
+      pygame.draw.polygon(screen, self.colour, [point1, point2, point3])
+
 # Blinky (The Red Ghost):
 #   In CHASE mode Blinky targets !PacMans exact grid location.
 #   In SCATTER mode Blinky targets the Top Right Corner of the map.
@@ -159,7 +173,7 @@ class Blinky(Ghost):
 #   Pinky starts inside the ghost home in the middle of Inky and Clyde.
 class Pinky(Ghost):
   def __init__(self):
-    super().__init__(14, 11, (255, 184, 255), (3, 1), 5)
+    super().__init__(12, 14, (255, 184, 255), (3, 1), 5)
   def select_target_tile(self, pacman_position, pacman_direction):
     offset = 4
     if self.mode == "CHASE":
@@ -183,7 +197,7 @@ class Pinky(Ghost):
 #   Inky starts on the lefthand side of the ghost home, next to Pinky.
 class Inky(Ghost):
   def __init__(self, blinky):
-    super().__init__(14, 11, (0, 255, 255), (26, 29), 10)
+    super().__init__(13, 14, (0, 255, 255), (26, 29), 10)
     self.blinky = blinky
   def select_target_tile(self, pacman_position, pacman_direction):
     offset = 2
@@ -214,7 +228,7 @@ class Inky(Ghost):
 #   Clyde starts on the righthand side of the ghost home, next to Pinky.
 class Clyde(Ghost):
   def __init__(self):
-    super().__init__(14, 11, (255, 184, 82), (1, 29), 15)
+    super().__init__(14, 14, (255, 184, 82), (1, 29), 15)
   def select_target_tile(self, pacman_position, pacman_direction):
     if self.mode == "CHASE":
       pac_x, pac_y = pacman_position
