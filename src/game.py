@@ -52,12 +52,13 @@ class Game:
       nearest_ghost_dir = None
 
       for ghost in self.ghosts:
-          ghost_pos = (ghost.grid_x, ghost.grid_y)
-          dist = self.manhattan_distance(pacman_pos, ghost_pos)
+          if (ghost.grid_x < 11 or ghost.grid_x > 17) and (ghost.grid_y < 12 or ghost.grid_y > 15):
+            ghost_pos = (ghost.grid_x, ghost.grid_y)
+            dist = self.manhattan_distance(pacman_pos, ghost_pos)
 
-          if dist < nearest_ghost_dist:
-              nearest_ghost_dist = dist
-              nearest_ghost_dir = self.get_direction(pacman_pos, ghost_pos)
+            if dist < nearest_ghost_dist:
+                nearest_ghost_dist = dist
+                nearest_ghost_dir = self.get_direction(pacman_pos, ghost_pos)
 
       return nearest_ghost_dist, nearest_ghost_dir
 
