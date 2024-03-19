@@ -85,7 +85,7 @@ Welcome to the !Pac-Man Reinforcement Learning Workshop! This project is designe
 
 4. **Train the AI**: To train the AI agent, run `python train.py`. This will start the training process, and you can observe how the AI learns over time.
 
-5. **Run the Game**: You can run the game to see the non-AI version in action. Use `python main.py` to start.
+5. **Run the Game**: You can run the game to see the AI in action. Use `python main.py` to start.
 
 ### Workshop Goals
 
