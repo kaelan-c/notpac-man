@@ -9,7 +9,7 @@ class Ghost:
     self.release_time = release_time
     self.released = False
     self.move_timer = 0
-    self.move_frequency = 20
+    self.move_frequency = 1
     self.current_direction = "UP"
     self.mode_timings = [("SCATTER", 7), ("CHASE", 20)]
     self.mode = "SCATTER"  # Initial mode
@@ -18,19 +18,21 @@ class Ghost:
     self.scatter_target = scatter_target  # Define scatter targets for each ghost
     self.frightened_timer = 0
     self.frightened_duration = 7  # Duration of frightened mode
+    self.prev_grid_x = x
+    self.prev_grid_y = y
 
   def update_mode(self, game_time, frightened=False):
     if frightened:
       if self.mode != "FRIGHTENED":
         self.last_mode = self.mode
         self.mode = "FRIGHTENED"
-      self.move_frequency = 25
+      self.move_frequency = 2
       self.frightened_timer = self.frightened_duration
       self.last_mode_change_time = game_time
       return
 
     if self.mode == "FRIGHTENED":
-      self.frightened_timer -= (1 / 60) # Decrement timer once every second.
+      self.frightened_timer -= 1 # Decrement timer once every tick.
       if self.frightened_timer <= 0:
         self.mode = self.last_mode
         self.last_mode_change_time = game_time
@@ -39,7 +41,7 @@ class Ghost:
     time_since_last_change = game_time - self.last_mode_change_time
     if time_since_last_change >= self.mode_duration:
       # Cycle through the mode timings
-      self.move_frequency = 20
+      self.move_frequency = 1
       current_mode_index = [index for index, mode in enumerate(self.mode_timings) if mode[0] == self.mode][0]
       next_mode_index = (current_mode_index + 1) % len(self.mode_timings)
       self.mode, self.mode_duration = self.mode_timings[next_mode_index]
@@ -59,7 +61,6 @@ class Ghost:
       if self.move_timer >= self.move_frequency:
         self.move_timer = 0
         target_tile = self.select_target_tile(pacman_position, pacman_direction)
-
         possible_directions = self.get_possible_directions(game_map)
         best_direction = self.get_best_direction(possible_directions, target_tile, game_map)
         self.update_position(best_direction)
@@ -86,6 +87,8 @@ class Ghost:
     return best_direction
   
   def update_position(self, direction):
+    self.prev_grid_x = self.grid_x
+    self.prev_grid_y = self.grid_y
     if direction == "LEFT":
         self.grid_x -= 1
     elif direction == "RIGHT":

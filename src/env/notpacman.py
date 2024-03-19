@@ -6,10 +6,12 @@ class NotPacMan:
     self.grid_y = 17 # Pac-Man's y-coordinate on the grid
     self.direction = 'RIGHT'  # Current moving direction
     self.desired_direction = 'RIGHT'  # Desired direction
-    self.move_timer = 0
-    self.move_frequency = 18  # Number of frames between each move, slightly faster than ghosts.
+    self.prev_grid_x = 14
+    self.prev_grid_y = 17
 
   def can_move(self, game_map, direction):
+    self.prev_grid_x = self.grid_x
+    self.prev_grid_y = self.grid_y
     new_x, new_y = self.grid_x, self.grid_y
 
     if direction == "LEFT":
@@ -33,20 +35,16 @@ class NotPacMan:
     
     if self.can_move(game_map, self.desired_direction):
       self.direction = self.desired_direction  # Update current direction if possible
-
+    
     if self.can_move(game_map, self.direction):
-      self.move_timer += 1
-      if self.move_timer >= self.move_frequency:
-        self.move_timer = 0
-        if self.can_move(game_map, self.direction):
-          if self.direction == "LEFT":
-            self.grid_x -= 1
-          elif self.direction == "RIGHT":
-            self.grid_x += 1
-          elif self.direction == "UP":
-            self.grid_y -= 1
-          elif self.direction == "DOWN":
-            self.grid_y += 1
+      if self.direction == "LEFT":
+        self.grid_x -= 1
+      elif self.direction == "RIGHT":
+        self.grid_x += 1
+      elif self.direction == "UP":
+        self.grid_y -= 1
+      elif self.direction == "DOWN":
+        self.grid_y += 1
 
   def draw(self, screen):
     cell_size = 20  # Assuming this is your cell size
