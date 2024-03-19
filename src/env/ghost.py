@@ -2,7 +2,7 @@ import pygame
 
 class Ghost:
 
-  def __init__(self, x, y, colour, scatter_target, release_time):
+  def __init__(self, x, y, colour, cell_size, scatter_target, release_time):
     self.grid_x = x
     self.grid_y = y
     self.colour = colour
@@ -20,6 +20,7 @@ class Ghost:
     self.frightened_duration = 7  # Duration of frightened mode
     self.prev_grid_x = x
     self.prev_grid_y = y
+    self.cell_size = cell_size
 
   def update_mode(self, game_time, frightened=False):
     if frightened:
@@ -49,13 +50,18 @@ class Ghost:
     
   def move(self, game_map, pacman_position, pacman_direction, game_time):
       if game_time > self.release_time and self.released == False:
-        self.grid_x = 14
-        self.grid_y = 11
+        # Release Coors for classicmap.txt 
+        # self.grid_x = 14
+        # self.grid_y = 11
+
+        # Release Coords for simplemap.txt
+        self.grid_x = 11
+        self.grid_y = 7
         self.released = True
 
-      if self.grid_x == 0 and self.grid_y == 14:
-        self.grid_x = 26
-      elif self.grid_x == 27 and self.grid_y == 14:
+      if self.grid_x == 0 and self.grid_y == 9:
+        self.grid_x = 22
+      elif self.grid_x == 23 and self.grid_y == 9:
         self.grid_x = 1
       self.move_timer += 1
       if self.move_timer >= self.move_frequency:
@@ -133,7 +139,7 @@ class Ghost:
       return abs(x1 - x2) + abs(y1 - y2)
 
   def draw(self, screen):
-    cell_size = 20  # Assuming this is your cell size
+    cell_size = self.cell_size
     pixel_x = self.grid_x * cell_size
     pixel_y = self.grid_y * cell_size
 
@@ -160,8 +166,11 @@ class Ghost:
 #
 #   Blinky Starts outside of the Ghost Home.
 class Blinky(Ghost):
-  def __init__(self):
-    super().__init__(14, 11, (255, 0, 0), (23, 1), 0)
+  def __init__(self, cell_size):
+    # Blinky Spawn Coords classicmap.txt
+    x = 11
+    y = 7
+    super().__init__(x, y, (255, 0, 0), cell_size, (23, 1), 0)
   def select_target_tile(self, pacman_position, pacman_direction):
     if self.mode == "CHASE":
       return pacman_position
@@ -174,8 +183,14 @@ class Blinky(Ghost):
 #
 #   Pinky starts inside the ghost home in the middle of Inky and Clyde.
 class Pinky(Ghost):
-  def __init__(self):
-    super().__init__(12, 14, (255, 184, 255), (3, 1), 5)
+  def __init__(self, cell_size):
+    # # Plinky Spawn Coords classicmap.txt
+    # x = 12
+    # y = 14
+    # Pinky Spawn Coords simplemap.txt
+    x = 11
+    y = 9
+    super().__init__(x, y, (255, 184, 255), cell_size, (3, 1), 5)
   def select_target_tile(self, pacman_position, pacman_direction):
     offset = 4
     if self.mode == "CHASE":
@@ -198,8 +213,14 @@ class Pinky(Ghost):
 #
 #   Inky starts on the lefthand side of the ghost home, next to Pinky.
 class Inky(Ghost):
-  def __init__(self, blinky):
-    super().__init__(13, 14, (0, 255, 255), (26, 29), 10)
+  def __init__(self, cell_size, blinky):
+    # # Plinky Spawn Coords classicmap.txt
+    # x = 12
+    # y = 14
+    # Pinky Spawn Coords simplemap.txt
+    x = 11
+    y = 9
+    super().__init__(x, y, (0, 255, 255), cell_size, (26, 29), 10)
     self.blinky = blinky
   def select_target_tile(self, pacman_position, pacman_direction):
     offset = 2
@@ -229,8 +250,14 @@ class Inky(Ghost):
 #
 #   Clyde starts on the righthand side of the ghost home, next to Pinky.
 class Clyde(Ghost):
-  def __init__(self):
-    super().__init__(14, 14, (255, 184, 82), (1, 29), 15)
+  def __init__(self, cell_size):
+    # # Plinky Spawn Coords classicmap.txt
+    # x = 12
+    # y = 14
+    # Pinky Spawn Coords simplemap.txt
+    x = 11
+    y = 9
+    super().__init__(x, y, (255, 184, 82), cell_size, (1, 29), 15)
   def select_target_tile(self, pacman_position, pacman_direction):
     if self.mode == "CHASE":
       pac_x, pac_y = pacman_position

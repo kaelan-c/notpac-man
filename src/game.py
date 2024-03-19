@@ -4,23 +4,27 @@ from env.gamemap import GameMap
 from env.ghost import Blinky, Inky, Pinky, Clyde
 
 class Game:
-  def __init__(self, screen, tick_rate, headless=False):
-    self.headless = headless # Rendering flag
+  def __init__(self, screen, tick_rate, cell_size, num_ghosts, map_file, headless=False):
+    self.headless = headless  # Rendering flag
     self.tick_rate = tick_rate
     self.game_time = 0
     self.score = 0
     self.lives = 3
     self.state = "PLAYING"
     self.screen = screen
-    self.game_map = GameMap("env/maps/basicmap.txt")
+    self.cell_size = cell_size
+    self.game_map = GameMap(map_file)
     self.game_map.create_map_surface()
-    self.notpacman = NotPacMan()
-    blinky = Blinky()
-    pinky = Pinky()
-    inky = Inky(blinky)
-    clyde = Clyde()
+    self.notpacman = NotPacMan(cell_size)
+    self.num_ghosts = num_ghosts
 
-    self.ghosts = [blinky, pinky, inky, clyde]
+    blinky = Blinky(cell_size) if self.num_ghosts > 0 else None
+    pinky = Pinky(cell_size) if self.num_ghosts > 1 else None
+    inky = Inky(cell_size, blinky) if self.num_ghosts > 2 and blinky is not None else None
+    clyde = Clyde(cell_size) if self.num_ghosts > 3 else None
+
+    # Create the ghosts list based on the number of ghosts
+    self.ghosts = [g for g in [blinky, pinky, inky, clyde] if g is not None]
 
   def get_state(self):
     pacman_pos = (self.notpacman.grid_x, self.notpacman.grid_y)
@@ -160,21 +164,23 @@ class Game:
         self.game_time = 0
         if ghost.mode == "FRIGHTENED":
           self.score += 100
-          ghost.grid_x = 13
-          ghost.grid_y = 14
+          ghost.grid_x = 11
+          ghost.grid_y = 9
           ghost.released = False
           ghost.release_time = 5
           ghost.mode = "SCATTER"
         else:
           self.lives -= 1
-          self.notpacman.grid_x = 14
-          self.notpacman.grid_y = 17
+          self.notpacman.grid_x = 11
+          self.notpacman.grid_y = 11
 
-          blinky = Blinky()
-          pinky = Pinky()
-          inky = Inky(blinky)
-          clyde = Clyde()
-          self.ghosts = [blinky, pinky, inky, clyde]
+          blinky = Blinky(self.cell_size) if self.num_ghosts > 0 else None
+          pinky = Pinky(self.cell_size) if self.num_ghosts > 1 else None
+          inky = Inky(self.cell_size, blinky) if self.num_ghosts > 2 and blinky is not None else None
+          clyde = Clyde(self.cell_size) if self.num_ghosts > 3 else None
+
+          # Create the ghosts list based on the number of ghosts
+          self.ghosts = [g for g in [blinky, pinky, inky, clyde] if g is not None]
 
           if self.lives == 0:
            #print("Game Over")
@@ -205,17 +211,6 @@ class Game:
           return True
       else:
           return False
-
-  def handle_human_input(self):
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
-      self.notpacman.desired_direction = "LEFT"
-    elif keys[pygame.K_RIGHT]:
-      self.notpacman.desired_direction = "RIGHT"
-    elif keys[pygame.K_UP]:
-      self.notpacman.desired_direction = "UP"
-    elif keys[pygame.K_DOWN]:
-      self.notpacman.desired_direction = "DOWN"
 
   def game_over(self):
     # Display a game over message or screen
