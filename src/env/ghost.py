@@ -61,7 +61,7 @@ class Ghost:
 
       if self.grid_x == 0 and self.grid_y == 9:
         self.grid_x = 22
-      elif self.grid_x == 23 and self.grid_y == 9:
+      elif self.grid_x == 22 and self.grid_y == 9:
         self.grid_x = 1
       self.move_timer += 1
       if self.move_timer >= self.move_frequency:
@@ -190,7 +190,7 @@ class Pinky(Ghost):
     # Pinky Spawn Coords simplemap.txt
     x = 11
     y = 9
-    super().__init__(x, y, (255, 184, 255), cell_size, (3, 1), 5)
+    super().__init__(x, y, (255, 184, 255), cell_size, (3, 1), 10)
   def select_target_tile(self, pacman_position, pacman_direction):
     offset = 4
     if self.mode == "CHASE":
@@ -219,8 +219,8 @@ class Inky(Ghost):
     # y = 14
     # Pinky Spawn Coords simplemap.txt
     x = 11
-    y = 9
-    super().__init__(x, y, (0, 255, 255), cell_size, (26, 29), 10)
+    y = 10
+    super().__init__(x, y, (0, 255, 255), cell_size, (26, 29), 20)
     self.blinky = blinky
   def select_target_tile(self, pacman_position, pacman_direction):
     offset = 2
@@ -256,8 +256,8 @@ class Clyde(Ghost):
     # y = 14
     # Pinky Spawn Coords simplemap.txt
     x = 11
-    y = 9
-    super().__init__(x, y, (255, 184, 82), cell_size, (1, 29), 15)
+    y = 8
+    super().__init__(x, y, (255, 184, 82), cell_size, (1, 29), 30)
   def select_target_tile(self, pacman_position, pacman_direction):
     if self.mode == "CHASE":
       pac_x, pac_y = pacman_position

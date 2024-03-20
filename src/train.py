@@ -6,7 +6,7 @@ from game import Game
 from agent import QLearningAgent
 
 # Training configuration constants
-NUM_EPISODES = 1000  # Total number of episodes for training
+NUM_EPISODES = 10000  # Total number of episodes for training
 PRINT_EVERY = 100    # Frequency for printing average rewards
 FILE_NAME = "pacman_training_data.txt"  # File name for saving training data
 

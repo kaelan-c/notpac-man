@@ -46,9 +46,9 @@ class NotPacMan:
     def move(self, game_map):
         # Handling for Pac-Man's teleportation through tunnel
         if self.grid_x == 0 and self.grid_y == 9:
-            self.grid_x = 23
+            self.grid_x = 22
             return
-        elif self.grid_x == 23 and self.grid_y == 9:
+        elif self.grid_x == 22 and self.grid_y == 9:
             self.grid_x = 1
             return
         

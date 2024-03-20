@@ -28,11 +28,11 @@ class Game:
 
   def get_state(self):
     pacman_pos = (self.notpacman.grid_x, self.notpacman.grid_y)
-    nearest_ghost_dist, nearest_ghost_dir = self.get_nearest_ghost_info(pacman_pos)
+    nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status = self.get_nearest_ghost_info(pacman_pos)
     nearest_dot_dist, nearest_dot_dir = self.get_nearest_dot_info(pacman_pos)
     dots_remaining = self.game_map.dots_total
 
-    state = (pacman_pos, nearest_ghost_dist, nearest_ghost_dir, nearest_dot_dist, nearest_dot_dir, dots_remaining)
+    state = (pacman_pos, nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status, nearest_dot_dist, nearest_dot_dir, dots_remaining)
     return state
 
   def get_nearest_dot_info(self, pacman_pos):
@@ -54,17 +54,22 @@ class Game:
   def get_nearest_ghost_info(self, pacman_pos):
       nearest_ghost_dist = float('inf')
       nearest_ghost_dir = None
+      nearest_ghost_status = 0
 
       for ghost in self.ghosts:
           if (ghost.grid_x < 11 or ghost.grid_x > 17) and (ghost.grid_y < 12 or ghost.grid_y > 15):
-            ghost_pos = (ghost.grid_x, ghost.grid_y)
-            dist = self.manhattan_distance(pacman_pos, ghost_pos)
+              ghost_pos = (ghost.grid_x, ghost.grid_y)
+              dist = self.manhattan_distance(pacman_pos, ghost_pos)
 
-            if dist < nearest_ghost_dist:
-                nearest_ghost_dist = dist
-                nearest_ghost_dir = self.get_direction(pacman_pos, ghost_pos)
+              if dist < nearest_ghost_dist:
+                  nearest_ghost_dist = dist
+                  nearest_ghost_dir = self.get_direction(pacman_pos, ghost_pos)
+                  if ghost.mode == "FRIGHTENED":
+                      nearest_ghost_status = 1
+                  else:
+                      nearest_ghost_status = 0
 
-      return nearest_ghost_dist, nearest_ghost_dir
+      return nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status
 
   def manhattan_distance(self, pos1, pos2):
       return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
