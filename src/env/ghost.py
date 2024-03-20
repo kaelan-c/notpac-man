@@ -11,13 +11,13 @@ class Ghost:
     self.move_timer = 0
     self.move_frequency = 1
     self.current_direction = "UP"
-    self.mode_timings = [("SCATTER", 7), ("CHASE", 20)]
+    self.mode_timings = [("SCATTER", 14), ("CHASE", 40)]
     self.mode = "SCATTER"  # Initial mode
     self.last_mode_change_time = 0  # Tracks when the last mode change occurred
     self.mode_duration = 0  # Duration of the current mode
     self.scatter_target = scatter_target  # Define scatter targets for each ghost
     self.frightened_timer = 0
-    self.frightened_duration = 7  # Duration of frightened mode
+    self.frightened_duration = 14  # Duration of frightened mode
     self.prev_grid_x = x
     self.prev_grid_y = y
     self.cell_size = cell_size
@@ -55,14 +55,14 @@ class Ghost:
         # self.grid_y = 11
 
         # Release Coords for simplemap.txt
-        self.grid_x = 11
+        self.grid_x = 9
         self.grid_y = 7
         self.released = True
 
       if self.grid_x == 0 and self.grid_y == 9:
-        self.grid_x = 22
-      elif self.grid_x == 22 and self.grid_y == 9:
-        self.grid_x = 1
+        self.grid_x = 18
+      elif self.grid_x == 18 and self.grid_y == 9:
+        self.grid_x = 0
       self.move_timer += 1
       if self.move_timer >= self.move_frequency:
         self.move_timer = 0
@@ -168,7 +168,7 @@ class Ghost:
 class Blinky(Ghost):
   def __init__(self, cell_size):
     # Blinky Spawn Coords classicmap.txt
-    x = 11
+    x = 9
     y = 7
     super().__init__(x, y, (255, 0, 0), cell_size, (23, 1), 0)
   def select_target_tile(self, pacman_position, pacman_direction):
@@ -188,7 +188,7 @@ class Pinky(Ghost):
     # x = 12
     # y = 14
     # Pinky Spawn Coords simplemap.txt
-    x = 11
+    x = 9
     y = 9
     super().__init__(x, y, (255, 184, 255), cell_size, (3, 1), 10)
   def select_target_tile(self, pacman_position, pacman_direction):
@@ -218,8 +218,8 @@ class Inky(Ghost):
     # x = 12
     # y = 14
     # Pinky Spawn Coords simplemap.txt
-    x = 11
-    y = 10
+    x = 8
+    y = 9
     super().__init__(x, y, (0, 255, 255), cell_size, (26, 29), 20)
     self.blinky = blinky
   def select_target_tile(self, pacman_position, pacman_direction):
@@ -255,8 +255,8 @@ class Clyde(Ghost):
     # x = 12
     # y = 14
     # Pinky Spawn Coords simplemap.txt
-    x = 11
-    y = 8
+    x = 10
+    y = 9
     super().__init__(x, y, (255, 184, 82), cell_size, (1, 29), 30)
   def select_target_tile(self, pacman_position, pacman_direction):
     if self.mode == "CHASE":

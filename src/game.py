@@ -57,7 +57,7 @@ class Game:
       nearest_ghost_status = 0
 
       for ghost in self.ghosts:
-          if (ghost.grid_x < 11 or ghost.grid_x > 17) and (ghost.grid_y < 12 or ghost.grid_y > 15):
+          if (ghost.grid_x < 8 or ghost.grid_x > 10) and (ghost.grid_y != 9):
               ghost_pos = (ghost.grid_x, ghost.grid_y)
               dist = self.manhattan_distance(pacman_pos, ghost_pos)
 
@@ -103,15 +103,15 @@ class Game:
 
     # Penalty for losing a life
     if self.life_lost:
-        reward -= 100
+        reward -= 400
 
     # Reward for winning
     if self.won:
-        reward += 500
+        reward += 600
 
     # Big penalty for losing
     if self.lost:
-        reward -= 500
+        reward -= 600
 
     # Reset flags for the next calculation
     self.score_change = 0
@@ -169,10 +169,10 @@ class Game:
         self.game_time = 0
         if ghost.mode == "FRIGHTENED":
           self.score += 100
-          ghost.grid_x = 11
+          ghost.grid_x = 9
           ghost.grid_y = 9
           ghost.released = False
-          ghost.release_time = 5
+          ghost.release_time = 10
           ghost.mode = "SCATTER"
         else:
           self.lives -= 1

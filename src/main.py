@@ -53,7 +53,7 @@ def main():
 
         game.render()  # Render the game state to the screen
         pygame.display.flip()  # Update the display
-        pygame.time.wait(int(1500 / tick_rate))  # Control game speed for better observation
+        pygame.time.wait(int(11500 / tick_rate))  # Control game speed for better observation
 
 if __name__ == "__main__":
     main()  # Run the main function when the script is executed
