@@ -31,8 +31,9 @@ class Game:
     nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status = self.get_nearest_ghost_info(pacman_pos)
     nearest_dot_dist, nearest_dot_dir = self.get_nearest_dot_info(pacman_pos)
     dots_remaining = self.game_map.dots_total
+    lives_remaining = self.lives
 
-    state = (pacman_pos, nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status, nearest_dot_dist, nearest_dot_dir, dots_remaining)
+    state = (pacman_pos, nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status, nearest_dot_dist, nearest_dot_dir, dots_remaining, lives_remaining)
     return state
 
   def get_nearest_dot_info(self, pacman_pos):
@@ -103,7 +104,7 @@ class Game:
 
     # Penalty for losing a life
     if self.life_lost:
-        reward -= 400
+        reward -= 300
 
     # Reward for winning
     if self.won:
