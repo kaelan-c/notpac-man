@@ -59,10 +59,12 @@ class Ghost:
         self.grid_y = 7
         self.released = True
 
-      if self.grid_x == 0 and self.grid_y == 9:
+      if self.grid_x == -1 and self.grid_y == 9:
         self.grid_x = 18
-      elif self.grid_x == 18 and self.grid_y == 9:
+        pass
+      elif self.grid_x == 19 and self.grid_y == 9:
         self.grid_x = 0
+        pass
       self.move_timer += 1
       if self.move_timer >= self.move_frequency:
         self.move_timer = 0

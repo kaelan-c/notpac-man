@@ -1,4 +1,5 @@
 import pygame
+import math
 from env.notpacman import NotPacMan
 from env.gamemap import GameMap
 from env.ghost import Blinky, Inky, Pinky, Clyde
@@ -26,14 +27,51 @@ class Game:
     # Create the ghosts list based on the number of ghosts
     self.ghosts = [g for g in [blinky, pinky, inky, clyde] if g is not None]
 
+  # def get_state(self):
+  #   pacman_pos = (self.notpacman.grid_x, self.notpacman.grid_y)
+  #   nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status = self.get_nearest_ghost_info(pacman_pos)
+  #   nearest_dot_dist, nearest_dot_dir = self.get_nearest_dot_info(pacman_pos)
+  #   dots_remaining = self.game_map.dots_total
+  #   lives_remaining = self.lives
+
+  #   state = (pacman_pos, nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status, nearest_dot_dist, nearest_dot_dir, dots_remaining, lives_remaining)
+  #   return state
+    
+  def get_coarse_position(self, pacman_pos, coarse_factor_x=2, coarse_factor_y=2):
+    # Assuming original grid is 18x21, adjust factors as needed
+    coarse_x = math.floor(pacman_pos[0] // coarse_factor_x)
+    coarse_y = math.floor(pacman_pos[1] // coarse_factor_y)
+    return (coarse_x, coarse_y)
+
+
+  # experimental state rep  
   def get_state(self):
     pacman_pos = (self.notpacman.grid_x, self.notpacman.grid_y)
     nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status = self.get_nearest_ghost_info(pacman_pos)
     nearest_dot_dist, nearest_dot_dir = self.get_nearest_dot_info(pacman_pos)
-    dots_remaining = self.game_map.dots_total
     lives_remaining = self.lives
+    coarse_pos = self.get_coarse_position(pacman_pos)
 
-    state = (pacman_pos, nearest_ghost_dist, nearest_ghost_dir, nearest_ghost_status, nearest_dot_dist, nearest_dot_dir, dots_remaining, lives_remaining)
+    if nearest_ghost_dist < 2:
+        ghost_dist = 0
+    elif nearest_ghost_dist < 6:
+        ghost_dist = 1
+    elif nearest_ghost_dist < 10:
+        ghost_dist = 2
+    else:
+        ghost_dist = 3
+
+    if self.game_map.dots_total == 0:
+       dots_remaining = 0
+    elif self.game_map.dots_total < 25:
+       dots_remaining = 1
+    elif self.game_map.dots_total < 100:
+       dots_remaining = 2
+    else:
+       dots_remaining = 3
+
+    state = (coarse_pos, ghost_dist, nearest_ghost_dir, nearest_ghost_status,
+              nearest_dot_dir, dots_remaining, lives_remaining)
     return state
 
   def get_nearest_dot_info(self, pacman_pos):
@@ -97,22 +135,23 @@ class Game:
 
     # Reward for eating dots
     if self.score_change > 0:
-        reward += self.score_change
+      reward += self.score_change / 2
     
     # Penalty for each step to encourage movement
-    reward -= 1
+    if self.score_change == 0:
+      reward -= 1
 
     # Penalty for losing a life
     if self.life_lost:
-        reward -= 300
+        reward -= 150
 
     # Reward for winning
     if self.won:
-        reward += 600
+        reward += 300
 
     # Big penalty for losing
     if self.lost:
-        reward -= 600
+        reward -= 300
 
     # Reset flags for the next calculation
     self.score_change = 0

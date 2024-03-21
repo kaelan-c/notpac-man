@@ -27,7 +27,7 @@ def main():
     # Extract the map dimensions from the file
     width, height, cell_size, num_ghosts = get_map_dimensions(map_file)
     # Set up the Pygame display window
-    screen = pygame.display.set_mode((width * cell_size, height * cell_size))
+    screen = pygame.display.set_mode((width * (cell_size - 1), height * cell_size))
     pygame.display.set_caption("!Pac-Man")  # Set the window title
 
     q_table = load_q_table()  # Load the Q-table for the AI agent
@@ -53,7 +53,7 @@ def main():
 
         game.render()  # Render the game state to the screen
         pygame.display.flip()  # Update the display
-        pygame.time.wait(int(11500 / tick_rate))  # Control game speed for better observation
+        pygame.time.wait(int(5000 / tick_rate))  # Control game speed for better observation
 
 if __name__ == "__main__":
     main()  # Run the main function when the script is executed
