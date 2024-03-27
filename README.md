@@ -1,3 +1,5 @@
+*** Repo is not in working order at the moment. I am doing a large refactor, hope to be finished in a few weeks ***
+
 # !Pac-Man: Reinforcement Learning Workshop
 
 ## University of Lethbridge Computer Science Club
